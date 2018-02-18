@@ -15,6 +15,8 @@ public class MainFragment extends BrowseFragment {
     public void onActivityCreated(Bundle savedInsanceState) {
         Log.i(TAG, "onActivityCreate");
         super.onActivityCreated(savedInsanceState);
+
+        setupUIElements();
     }
 
     private void setupUIElements() {
