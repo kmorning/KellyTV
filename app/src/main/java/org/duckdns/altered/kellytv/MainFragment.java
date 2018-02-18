@@ -7,7 +7,10 @@ import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
+import android.support.v17.leanback.widget.OnItemViewClickedListener;
 import android.support.v17.leanback.widget.Presenter;
+import android.support.v17.leanback.widget.Row;
+import android.support.v17.leanback.widget.RowPresenter;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.ViewGroup;
@@ -60,6 +63,14 @@ public class MainFragment extends BrowseFragment {
 
         /* set */
         setAdapter(mRowsAdapter);
+    }
+
+    private final class ItemViewClickedListener implements OnItemViewClickedListener {
+        @Override
+        public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item,
+                                  RowPresenter.ViewHolder rowViewHolder, Row row) {
+            // each time the item is clicked, code inside of here will be executed.
+        }
     }
 
     private class GridItemPresenter extends Presenter {
