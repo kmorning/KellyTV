@@ -16,4 +16,16 @@ public class MainFragment extends BrowseFragment {
         Log.i(TAG, "onActivityCreate");
         super.onActivityCreated(savedInsanceState);
     }
+
+    private void setupUIElements() {
+        // setBadgeDrawable(getActivity().getResources().getDrawable(R.drawable.videos_by_google_banner));
+        setTitle("Kelly TV"); // Badge, when set, takes precedent over title
+        setHeadersState(HEADERS_ENABLED);
+        setHeadersTransitionOnBackEnabled(true);
+
+        // set fastLane (or headers) background color
+        setBrandColor(getResources().getColor(R.color.fastlane_background));
+        // set search icon color
+        setSearchAffordanceColor(getResources().getColor(R.color.search_opaque));
+    }
 }
