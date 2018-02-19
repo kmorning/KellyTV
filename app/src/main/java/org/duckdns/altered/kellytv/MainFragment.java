@@ -1,5 +1,6 @@
 package org.duckdns.altered.kellytv;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v17.leanback.app.BrowseFragment;
@@ -70,6 +71,14 @@ public class MainFragment extends BrowseFragment {
         public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item,
                                   RowPresenter.ViewHolder rowViewHolder, Row row) {
             // each time the item is clicked, code inside of here will be executed.
+            Log.d("itemClicked", item.getClass().toString());
+            if (item instanceof String){
+                Log.d("itemPressed", item.toString());
+                if (item == "Settings") {
+                    Intent intent = new Intent(getActivity(), EpgSettingsActivity.class);
+                    startActivity(intent);
+                }
+            }
         }
     }
 
