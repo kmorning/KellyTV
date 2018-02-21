@@ -36,6 +36,8 @@ public class MainFragment extends BrowseFragment {
         setupUIElements();
 
         loadRows();
+
+        setupEventListeners();
     }
 
     private void setupUIElements() {
@@ -64,6 +66,10 @@ public class MainFragment extends BrowseFragment {
 
         /* set */
         setAdapter(mRowsAdapter);
+    }
+
+    private void setupEventListeners() {
+        setOnItemViewClickedListener(new ItemViewClickedListener());
     }
 
     private final class ItemViewClickedListener implements OnItemViewClickedListener {
