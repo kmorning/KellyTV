@@ -83,6 +83,9 @@ public class MainFragment extends BrowseFragment {
                 if (item == "Settings") {
                     Intent intent = new Intent(getActivity(), EpgSettingsActivity.class);
                     startActivity(intent);
+                } else if (item == "Status") {
+                    Intent intent = new Intent(getActivity(), EpgStatusActivity.class);
+                    startActivity(intent);
                 }
             }
         }
