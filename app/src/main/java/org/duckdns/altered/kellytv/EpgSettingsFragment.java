@@ -25,6 +25,7 @@ public class EpgSettingsFragment extends GuidedStepFragment {
     private static final int ACTION_AUTO_UPDATE = 1;
     private static final int ACTION_INTERVAL_VALUE = 2;
     private static final int ACTION_INTERVAL_UNITS = 3;
+    private static final int ACTION_DEFAULTS = 4;
 
     /* Auto update on/off options */
     private static final int AUTO_UPDATE_OPTION_SET_ID = 10;
@@ -32,6 +33,10 @@ public class EpgSettingsFragment extends GuidedStepFragment {
 
     /* Interval units options */
     private static final int INTERVAL_UNITS_OPTION_SET_ID = 11;
+
+    /* Defaults options */
+    private static final int DEFAULTS_OPTION_SET_ID = 12;
+    private static final String[] DEFAULTS_OPTION_NAMES = {"Load Default Settings", "Cancel"};
 
     private EpgStoredSettings mSettings;
 
@@ -53,6 +58,7 @@ public class EpgSettingsFragment extends GuidedStepFragment {
         GuidedStepHelper.addEditableAction(actions, context, ACTION_URL, "EPG URL", "");
         GuidedStepHelper.addEditableAction(actions, context, ACTION_INTERVAL_VALUE, "Update Interval Value", "");
         GuidedStepHelper.addActionWithSub(actions, context, ACTION_INTERVAL_UNITS, "Update Interval Units", "");
+        GuidedStepHelper.addActionWithSub(actions, context, ACTION_DEFAULTS, "Defaults", "");
     }
 
     @Override
@@ -102,6 +108,16 @@ public class EpgSettingsFragment extends GuidedStepFragment {
                     units == storedUnits);
         }
         intervalUnitsAction.setDescription(storedUnits.name());
+
+        GuidedAction defaultsAction = findActionById(ACTION_DEFAULTS);
+        List<GuidedAction> defaultsSubActions = defaultsAction.getSubActions();
+        for (int i = 0; i < DEFAULTS_OPTION_NAMES.length; i++) {
+            GuidedStepHelper.addCheckedAction(defaultsSubActions,
+                    getActivity(),
+                    DEFAULTS_OPTION_NAMES[i],
+                    DEFAULTS_OPTION_SET_ID,
+                    false);
+        }
     }
 
     @Override
@@ -135,6 +151,14 @@ public class EpgSettingsFragment extends GuidedStepFragment {
             findActionById(ACTION_INTERVAL_UNITS).setDescription(selection);
             notifyActionChanged(findActionPositionById(ACTION_INTERVAL_UNITS));
             mSettings.setIntervalUnits(selection);
+            return true;
+        } else if (action.getCheckSetId() == DEFAULTS_OPTION_SET_ID && action.isChecked()) {
+            if (action.getTitle() == DEFAULTS_OPTION_NAMES[0]) {
+                mSettings.restoreDefaults();
+                updateActions();
+            }
+            action.setChecked(false);
+            notifyActionChanged(findActionPositionById(ACTION_DEFAULTS));
             return true;
         } else {
             return false;
