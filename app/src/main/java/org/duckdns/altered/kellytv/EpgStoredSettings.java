@@ -20,9 +20,7 @@ public class EpgStoredSettings {
     private String mUrl;
     private int mIntervalValue;
     private String mIntervalUnits;
-    // TODO: Figure out how to handle time
     private String mLastUpdateTimeStr;
-    //private Date mLastUpdateTime;
 
     public EpgStoredSettings(Context context) {
         mContext = context;
@@ -97,6 +95,18 @@ public class EpgStoredSettings {
         mLastUpdateTimeStr = dateToString(date);
         mEditor.putString(mContext.getString(R.string.epg_last_update_time_key),
                 mContext.getString(R.string.epg_last_update_time_default));
+        mEditor.apply();
+    }
+
+    public void restoreDefaults() {
+        mAutoUpdate = mContext.getResources().getBoolean(R.bool.epg_auto_update_default);
+        mEditor.putBoolean(mContext.getString(R.string.epg_auto_update_key), mAutoUpdate);
+        mUrl = mContext.getString(R.string.epg_url_default);
+        mEditor.putString(mContext.getString(R.string.epg_url_key), mUrl);
+        mIntervalValue = mContext.getResources().getInteger(R.integer.epg_interval_value_default);
+        mEditor.putInt(mContext.getString(R.string.epg_interval_value_key), mIntervalValue);
+        mIntervalUnits = mContext.getString(R.string.epg_interval_units_default);
+        mEditor.putString(mContext.getString(R.string.epg_interval_units_key), mIntervalUnits);
         mEditor.apply();
     }
 

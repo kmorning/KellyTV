@@ -57,6 +57,10 @@ public class EpgSettingsFragment extends GuidedStepFragment {
     @Override
     public void onResume() {
         super.onResume();
+        updateActions();
+    }
+
+    public void updateActions() {
         // load settings
         mSettings = new EpgStoredSettings(getActivity());
         GuidedAction autoUpdateAction = findActionById(ACTION_AUTO_UPDATE);
@@ -135,6 +139,8 @@ public class EpgSettingsFragment extends GuidedStepFragment {
             return false;
         }
     }
+
+    //public void updateActions() {}
 
     private static void addActionWithSub(List<GuidedAction> actions, Context context, long id,
                                          String title, String desc) {
