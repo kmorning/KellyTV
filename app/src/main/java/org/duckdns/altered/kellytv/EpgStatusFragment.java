@@ -37,7 +37,7 @@ public class EpgStatusFragment extends GuidedStepFragment {
     public void onCreateActions(@NonNull List<GuidedAction> actions, Bundle savedInstanceState) {
         Context context = getActivity();
 
-        addAction(actions,
+        GuidedStepHelper.addAction(actions,
                 context,
                 ACTION_LAST_UPDATE_TIME,
                 "Last Update Time",
@@ -56,14 +56,5 @@ public class EpgStatusFragment extends GuidedStepFragment {
     @Override
     public void onGuidedActionClicked(GuidedAction action) {
 
-    }
-
-    private static void addAction(List<GuidedAction> actions, Context context, long id,
-                                          String title, String desc) {
-        actions.add(new GuidedAction.Builder(context)
-                .id(id)
-                .title(title)
-                .description(desc).descriptionEditable(false)
-                .build());
     }
 }

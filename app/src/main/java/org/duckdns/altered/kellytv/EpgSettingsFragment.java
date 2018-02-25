@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.duckdns.altered.kellytv.GuidedStepHelper;
+
 /**
  * Created by kmorning on 2018-02-20.
  */
@@ -47,11 +49,10 @@ public class EpgSettingsFragment extends GuidedStepFragment {
     public void onCreateActions(@NonNull List<GuidedAction> actions, Bundle savedInstanceState) {
         Context context = getActivity();
 
-        addActionWithSub(actions, context, ACTION_AUTO_UPDATE, "Auto Update", "");
-        addEditableAction(actions, context, ACTION_URL, "EPG URL", "");
-        addEditableAction(actions, context, ACTION_INTERVAL_VALUE, "Update Interval Value", "");
-        //addEditableAction(actions, context, ACTION_INTERVAL_UNITS, "Update Units", "");
-        addActionWithSub(actions, context, ACTION_INTERVAL_UNITS, "Update Interval Units", "");
+        GuidedStepHelper.addActionWithSub(actions, context, ACTION_AUTO_UPDATE, "Auto Update", "");
+        GuidedStepHelper.addEditableAction(actions, context, ACTION_URL, "EPG URL", "");
+        GuidedStepHelper.addEditableAction(actions, context, ACTION_INTERVAL_VALUE, "Update Interval Value", "");
+        GuidedStepHelper.addActionWithSub(actions, context, ACTION_INTERVAL_UNITS, "Update Interval Units", "");
     }
 
     @Override
@@ -69,7 +70,7 @@ public class EpgSettingsFragment extends GuidedStepFragment {
         checked[0] = mSettings.getAutoUpdate();
         checked[1] = !mSettings.getAutoUpdate();
         for (int i = 0; i < AUTO_UPDATE_OPTION_NAMES.length; i++) {
-            addCheckedAction(autoUpdateSubActions,
+            GuidedStepHelper.addCheckedAction(autoUpdateSubActions,
                     getActivity(),
                     AUTO_UPDATE_OPTION_NAMES[i],
                     AUTO_UPDATE_OPTION_SET_ID,
@@ -94,7 +95,7 @@ public class EpgSettingsFragment extends GuidedStepFragment {
                 EpgStoredSettings.IntervalUnits.valueOf(mSettings.getIntervalUnits());
         for (int i = 0; i < EpgStoredSettings.IntervalUnits.values().length; i++) {
             EpgStoredSettings.IntervalUnits units = EpgStoredSettings.IntervalUnits.values()[i];
-            addCheckedAction(unitsSubActions,
+            GuidedStepHelper.addCheckedAction(unitsSubActions,
                     getActivity(),
                     units.name(),
                     INTERVAL_UNITS_OPTION_SET_ID,
@@ -138,38 +139,5 @@ public class EpgSettingsFragment extends GuidedStepFragment {
         } else {
             return false;
         }
-    }
-
-    //public void updateActions() {}
-
-    private static void addActionWithSub(List<GuidedAction> actions, Context context, long id,
-                                         String title, String desc) {
-        List<GuidedAction> subActions = new ArrayList();
-        actions.add(new GuidedAction.Builder(context)
-                .title(title)
-                .id(id)
-                .description(desc)
-                .subActions(subActions)
-                .build());
-    }
-
-    private static void addEditableAction(List<GuidedAction> actions, Context context, long id,
-                                          String title, String desc) {
-        actions.add(new GuidedAction.Builder(context)
-                .id(id)
-                .title(title)
-                .description(desc).descriptionEditable(true)
-                .build());
-    }
-
-    private static void addCheckedAction(List<GuidedAction> actions, Context context,
-                                         String title, int id, boolean checked) {
-        GuidedAction guidedAction = new GuidedAction.Builder(context)
-                .title(title)
-                .checkSetId(id)
-                .build();
-        guidedAction.setChecked(checked);
-        actions.add(guidedAction);
-
     }
 }
