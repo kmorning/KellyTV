@@ -75,4 +75,10 @@ public class EpgStoredSettings {
         mEditor.putString(mContext.getString(R.string.epg_interval_units_key), mIntervalUnits);
         mEditor.apply();
     }
+
+    public enum IntervalUnits {
+        minutes,
+        hours,
+        days
+    }
 }

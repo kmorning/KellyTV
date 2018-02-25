@@ -25,10 +25,11 @@ public class EpgSettingsFragment extends GuidedStepFragment {
     private static final int ACTION_INTERVAL_UNITS = 3;
 
     /* Auto update on/off options */
-    private static final int UPDATE_OPTION_CHECK_SET_ID = 10;
-    private static final String[] UPDATE_OPTION_NAMES = {"on", "off"};
-    //private static final boolean[] UPDATE_OPTION_CHECKED = {true, false};
-    //private boolean[] checked = new boolean[2];
+    private static final int AUTO_UPDATE_OPTION_SET_ID = 10;
+    private static final String[] AUTO_UPDATE_OPTION_NAMES = {"on", "off"};
+
+    /* Interval units options */
+    private static final int INTERVAL_UNITS_OPTION_SET_ID = 11;
 
     private EpgStoredSettings mSettings;
 
@@ -48,8 +49,9 @@ public class EpgSettingsFragment extends GuidedStepFragment {
 
         addActionWithSub(actions, context, ACTION_AUTO_UPDATE, "Auto Update", "");
         addEditableAction(actions, context, ACTION_URL, "EPG URL", "");
-        addEditableAction(actions, context, ACTION_INTERVAL_VALUE, "Update Value", "");
-        addEditableAction(actions, context, ACTION_INTERVAL_UNITS, "Update Units", "");
+        addEditableAction(actions, context, ACTION_INTERVAL_VALUE, "Update Interval Value", "");
+        //addEditableAction(actions, context, ACTION_INTERVAL_UNITS, "Update Units", "");
+        addActionWithSub(actions, context, ACTION_INTERVAL_UNITS, "Update Interval Units", "");
     }
 
     @Override
@@ -58,17 +60,21 @@ public class EpgSettingsFragment extends GuidedStepFragment {
         // load settings
         mSettings = new EpgStoredSettings(getActivity());
         GuidedAction autoUpdateAction = findActionById(ACTION_AUTO_UPDATE);
-        List<GuidedAction> subActions = autoUpdateAction.getSubActions();
+        List<GuidedAction> autoUpdateSubActions = autoUpdateAction.getSubActions();
         boolean checked[] = new boolean[2];
         checked[0] = mSettings.getAutoUpdate();
         checked[1] = !mSettings.getAutoUpdate();
-        for (int i = 0; i < UPDATE_OPTION_NAMES.length; i++) {
-            addCheckedAction(subActions, getActivity(), UPDATE_OPTION_NAMES[i], checked[i]);
+        for (int i = 0; i < AUTO_UPDATE_OPTION_NAMES.length; i++) {
+            addCheckedAction(autoUpdateSubActions,
+                    getActivity(),
+                    AUTO_UPDATE_OPTION_NAMES[i],
+                    AUTO_UPDATE_OPTION_SET_ID,
+                    checked[i]);
         }
         if (mSettings.getAutoUpdate()) {
-            autoUpdateAction.setDescription(UPDATE_OPTION_NAMES[0]);
+            autoUpdateAction.setDescription(AUTO_UPDATE_OPTION_NAMES[0]);
         } else {
-            autoUpdateAction.setDescription(UPDATE_OPTION_NAMES[1]);
+            autoUpdateAction.setDescription(AUTO_UPDATE_OPTION_NAMES[1]);
         }
         
         GuidedAction urlAction = findActionById(ACTION_URL);
@@ -78,7 +84,19 @@ public class EpgSettingsFragment extends GuidedStepFragment {
         intervalValueAction.setDescription(Integer.toString(mSettings.getIntervalValue()));
 
         GuidedAction intervalUnitsAction = findActionById(ACTION_INTERVAL_UNITS);
-        intervalUnitsAction.setDescription(mSettings.getIntervalUnits());
+        //intervalUnitsAction.setDescription(mSettings.getIntervalUnits());
+        List<GuidedAction> unitsSubActions = intervalUnitsAction.getSubActions();
+        EpgStoredSettings.IntervalUnits storedUnits =
+                EpgStoredSettings.IntervalUnits.valueOf(mSettings.getIntervalUnits());
+        for (int i = 0; i < EpgStoredSettings.IntervalUnits.values().length; i++) {
+            EpgStoredSettings.IntervalUnits units = EpgStoredSettings.IntervalUnits.values()[i];
+            addCheckedAction(unitsSubActions,
+                    getActivity(),
+                    units.name(),
+                    INTERVAL_UNITS_OPTION_SET_ID,
+                    units == storedUnits);
+        }
+        intervalUnitsAction.setDescription(storedUnits.name());
     }
 
     @Override
@@ -95,29 +113,28 @@ public class EpgSettingsFragment extends GuidedStepFragment {
             } catch (NumberFormatException e) {
                 action.setDescription(Integer.toString(mSettings.getIntervalValue()));
             }
-        } else if (ACTION_INTERVAL_UNITS == action.getId()) {
-            // TODO: validate input
-            mSettings.setIntervalUnits(action.getDescription().toString());
         }
     }
 
     @Override
     public boolean onSubGuidedActionClicked(GuidedAction action) {
-        if (action.isChecked()) {
+        if (action.getCheckSetId() == AUTO_UPDATE_OPTION_SET_ID && action.isChecked()) {
             String selection = action.getTitle().toString();
             findActionById(ACTION_AUTO_UPDATE).setDescription(selection);
             notifyActionChanged(findActionPositionById(ACTION_AUTO_UPDATE));
-            int i = Arrays.asList(UPDATE_OPTION_NAMES).indexOf(selection);
+            int i = Arrays.asList(AUTO_UPDATE_OPTION_NAMES).indexOf(selection);
             mSettings.setAutoUpdate(i == 0);
+            return true;
+        } else if (action.getCheckSetId() == INTERVAL_UNITS_OPTION_SET_ID && action.isChecked()) {
+            String selection = action.getTitle().toString();
+            findActionById(ACTION_INTERVAL_UNITS).setDescription(selection);
+            notifyActionChanged(findActionPositionById(ACTION_INTERVAL_UNITS));
+            mSettings.setIntervalUnits(selection);
+            return true;
+        } else {
+            return false;
         }
-        return true;
     }
-
-    /*
-    private void loadSettings() {
-
-    }
-    */
 
     private static void addActionWithSub(List<GuidedAction> actions, Context context, long id,
                                          String title, String desc) {
@@ -140,10 +157,10 @@ public class EpgSettingsFragment extends GuidedStepFragment {
     }
 
     private static void addCheckedAction(List<GuidedAction> actions, Context context,
-                                         String title, boolean checked) {
+                                         String title, int id, boolean checked) {
         GuidedAction guidedAction = new GuidedAction.Builder(context)
                 .title(title)
-                .checkSetId(UPDATE_OPTION_CHECK_SET_ID)
+                .checkSetId(id)
                 .build();
         guidedAction.setChecked(checked);
         actions.add(guidedAction);
