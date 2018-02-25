@@ -30,7 +30,7 @@ public class EpgSettingsFragment extends GuidedStepFragment {
     //private static final boolean[] UPDATE_OPTION_CHECKED = {true, false};
     //private boolean[] checked = new boolean[2];
 
-    private boolean bAutoUpdate;
+    private EpgStoredSettings mSettings;
 
     @Override
     public GuidanceStylist.Guidance onCreateGuidance(Bundle savedInstanceState) {
@@ -49,22 +49,22 @@ public class EpgSettingsFragment extends GuidedStepFragment {
         addActionWithSub(actions, context, ACTION_AUTO_UPDATE, "Auto Update", "");
         addEditableAction(actions, context, ACTION_URL, "EPG URL", "http://");
         addEditableAction(actions, context, ACTION_UPDATE_INT_VALUE, "Update Interval", "5");
-
-        loadSettings();
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        // load settings
+        mSettings = new EpgStoredSettings(getActivity());
         GuidedAction autoUpdateAction = findActionById(ACTION_AUTO_UPDATE);
         List<GuidedAction> subActions = autoUpdateAction.getSubActions();
         boolean checked[] = new boolean[2];
-        checked[0] = bAutoUpdate;
-        checked[1] = !bAutoUpdate;
+        checked[0] = mSettings.getAutoUpdate();
+        checked[1] = !mSettings.getAutoUpdate();
         for (int i = 0; i < UPDATE_OPTION_NAMES.length; i++) {
             addCheckedAction(subActions, getActivity(), UPDATE_OPTION_NAMES[i], checked[i]);
         }
-        if (bAutoUpdate) {
+        if (mSettings.getAutoUpdate()) {
             autoUpdateAction.setDescription(UPDATE_OPTION_NAMES[0]);
         } else {
             autoUpdateAction.setDescription(UPDATE_OPTION_NAMES[1]);
@@ -87,16 +87,16 @@ public class EpgSettingsFragment extends GuidedStepFragment {
             findActionById(ACTION_AUTO_UPDATE).setDescription(selection);
             notifyActionChanged(findActionPositionById(ACTION_AUTO_UPDATE));
             int i = Arrays.asList(UPDATE_OPTION_NAMES).indexOf(selection);
-            bAutoUpdate = i == 0;
+            mSettings.setAutoUpdate(i == 0);
         }
         return true;
     }
 
+    /*
     private void loadSettings() {
-        // TODO: Load saved settings here
-        // For now just set to auto update on for now and url to something
-        bAutoUpdate = true;
+
     }
+    */
 
     private static void addActionWithSub(List<GuidedAction> actions, Context context, long id,
                                          String title, String desc) {

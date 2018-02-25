@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">KellyTV</string>
+    <string name="epg_settings_key">org.duckdns.altered.kellytv.EPG_SETTINGS_KEY</string>
+    <string name="epg_url_default">https://raw.githubusercontent.com/kens13/epg/master/guide_kens.xml</string>
+    <string name="epg_interval_units_default">days</string>
+    <string name="epg_auto_update_key">AutoUpdate</string>
+    <string name="epg_url_key">URL</string>
+    <string name="epg_interval_value_key">IntervalValue</string>
+    <string name="epg_interval_units_key">IntervalUnits</string>
 </resources>
