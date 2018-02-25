@@ -30,6 +30,8 @@
 
         <activity android:name=".EpgSettingsActivity"
             android:theme="@style/Theme.Leanback.GuidedStep" />
+        <activity android:name=".EpgStatusActivity"
+            android:theme="@style/Theme.Leanback.GuidedStep" />
     </application>
 
 </manifest>
