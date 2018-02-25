@@ -21,8 +21,8 @@ public class EpgSettingsFragment extends GuidedStepFragment {
     /* Action ID definition */
     private static final int ACTION_URL = 0;
     private static final int ACTION_AUTO_UPDATE = 1;
-    private static final int ACTION_UPDATE_INT_UNITS = 2;
-    private static final int ACTION_UPDATE_INT_VALUE = 3;
+    private static final int ACTION_INTERVAL_VALUE = 2;
+    private static final int ACTION_INTERVAL_UNITS = 3;
 
     /* Auto update on/off options */
     private static final int UPDATE_OPTION_CHECK_SET_ID = 10;
@@ -47,8 +47,9 @@ public class EpgSettingsFragment extends GuidedStepFragment {
         Context context = getActivity();
 
         addActionWithSub(actions, context, ACTION_AUTO_UPDATE, "Auto Update", "");
-        addEditableAction(actions, context, ACTION_URL, "EPG URL", "http://");
-        addEditableAction(actions, context, ACTION_UPDATE_INT_VALUE, "Update Interval", "5");
+        addEditableAction(actions, context, ACTION_URL, "EPG URL", "");
+        addEditableAction(actions, context, ACTION_INTERVAL_VALUE, "Update Value", "");
+        addEditableAction(actions, context, ACTION_INTERVAL_UNITS, "Update Units", "");
     }
 
     @Override
@@ -69,14 +70,34 @@ public class EpgSettingsFragment extends GuidedStepFragment {
         } else {
             autoUpdateAction.setDescription(UPDATE_OPTION_NAMES[1]);
         }
+        
+        GuidedAction urlAction = findActionById(ACTION_URL);
+        urlAction.setDescription(mSettings.getUrl());
+        
+        GuidedAction intervalValueAction = findActionById(ACTION_INTERVAL_VALUE);
+        intervalValueAction.setDescription(Integer.toString(mSettings.getIntervalValue()));
+
+        GuidedAction intervalUnitsAction = findActionById(ACTION_INTERVAL_UNITS);
+        intervalUnitsAction.setDescription(mSettings.getIntervalUnits());
     }
 
     @Override
     public void onGuidedActionClicked(GuidedAction action) {
         if (ACTION_URL == action.getId()) {
-            Log.d("editedText", action.getDescription().toString());
-        } else if (ACTION_UPDATE_INT_VALUE == getId()) {
-            Log.d("editedText", action.getDescription().toString());
+            // TODO: validate input
+            //Log.d("editedText", action.getDescription().toString());
+            mSettings.setUrl(action.getDescription().toString());
+        } else if (ACTION_INTERVAL_VALUE == action.getId()) {
+            //Log.d("editedText", action.getDescription().toString());
+            try {
+                int value = Integer.parseInt(action.getDescription().toString());
+                mSettings.setIntervalValue(value);
+            } catch (NumberFormatException e) {
+                action.setDescription(Integer.toString(mSettings.getIntervalValue()));
+            }
+        } else if (ACTION_INTERVAL_UNITS == action.getId()) {
+            // TODO: validate input
+            mSettings.setIntervalUnits(action.getDescription().toString());
         }
     }
 
