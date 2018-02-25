@@ -7,4 +7,6 @@
     <string name="epg_url_key">URL</string>
     <string name="epg_interval_value_key">IntervalValue</string>
     <string name="epg_interval_units_key">IntervalUnits</string>
+    <string name="epg_last_update_time_default">1970-01-01 00:00:00 GMT</string>
+    <string name="epg_last_update_time_key">LastUpdateTime</string>
 </resources>

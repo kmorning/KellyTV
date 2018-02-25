@@ -15,6 +15,14 @@ import java.util.List;
  */
 
 public class EpgStatusFragment extends GuidedStepFragment {
+    /* Action ID definition */
+    private static final int ACTION_EPG_UPDATE_SERVICE = 0;
+    private static final int ACTION_LAST_UPDATE_TIME = 1;
+    private static final int ACTION_NEXT_UPDATE_TIME = 2;
+    private static final int ACTION_UPDATE_NOW = 3;
+
+    private EpgStoredSettings mSettings;
+
     @Override
     public GuidanceStylist.Guidance onCreateGuidance(Bundle savedInstanceState) {
         String title = "EPG Status";
@@ -28,15 +36,34 @@ public class EpgStatusFragment extends GuidedStepFragment {
     @Override
     public void onCreateActions(@NonNull List<GuidedAction> actions, Bundle savedInstanceState) {
         Context context = getActivity();
+
+        addAction(actions,
+                context,
+                ACTION_LAST_UPDATE_TIME,
+                "Last Update Time",
+                "");
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        // load settings
+        mSettings = new EpgStoredSettings(getActivity());
+        GuidedAction lastUpdateTimeAction = findActionById(ACTION_LAST_UPDATE_TIME);
+        lastUpdateTimeAction.setDescription(mSettings.getLastUpdateTimeStr());
     }
 
     @Override
     public void onGuidedActionClicked(GuidedAction action) {
 
+    }
+
+    private static void addAction(List<GuidedAction> actions, Context context, long id,
+                                          String title, String desc) {
+        actions.add(new GuidedAction.Builder(context)
+                .id(id)
+                .title(title)
+                .description(desc).descriptionEditable(false)
+                .build());
     }
 }

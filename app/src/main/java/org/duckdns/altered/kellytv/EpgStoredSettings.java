@@ -3,6 +3,11 @@ package org.duckdns.altered.kellytv;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Date;
+
 /**
  * Created by kmorning on 2018-02-24.
  */
@@ -16,7 +21,8 @@ public class EpgStoredSettings {
     private int mIntervalValue;
     private String mIntervalUnits;
     // TODO: Figure out how to handle time
-    //private String mLastUpdateTime;
+    private String mLastUpdateTimeStr;
+    //private Date mLastUpdateTime;
 
     public EpgStoredSettings(Context context) {
         mContext = context;
@@ -34,6 +40,9 @@ public class EpgStoredSettings {
                 context.getResources().getInteger(R.integer.epg_interval_value_default));
         mIntervalUnits = mSettings.getString(context.getString(R.string.epg_interval_units_key),
                 context.getString(R.string.epg_interval_units_default));
+        mLastUpdateTimeStr = mSettings.getString(context.getString(R.string.epg_last_update_time_key),
+                context.getString(R.string.epg_last_update_time_default));
+        //mLastUpdateTime = stringToDate(mLastUpdateTimeStr);
     }
 
     public boolean getAutoUpdate() {
@@ -76,9 +85,41 @@ public class EpgStoredSettings {
         mEditor.apply();
     }
 
+    public Date getLastUpdateTime() {
+        return stringToDate(mLastUpdateTimeStr);
+    }
+
+    public String getLastUpdateTimeStr() {
+        return mLastUpdateTimeStr;
+    }
+
+    public void setLastUpdateTime(Date date) {
+        mLastUpdateTimeStr = dateToString(date);
+        mEditor.putString(mContext.getString(R.string.epg_last_update_time_key),
+                mContext.getString(R.string.epg_last_update_time_default));
+        mEditor.apply();
+    }
+
     public enum IntervalUnits {
         minutes,
         hours,
         days
+    }
+
+    private Date stringToDate(String dateStr) {
+        SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+        Date date;
+        try {
+            date = ft.parse(dateStr);
+        } catch (ParseException e) {
+            date = new Date();
+            date.setTime(0);
+        }
+        return date;
+    }
+
+    private String dateToString(Date date) {
+        SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+        return ft.format(date);
     }
 }
