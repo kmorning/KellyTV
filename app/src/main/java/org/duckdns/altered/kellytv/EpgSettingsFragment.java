@@ -9,11 +9,9 @@ import android.support.v17.leanback.widget.GuidanceStylist;
 import android.support.v17.leanback.widget.GuidedAction;
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.duckdns.altered.kellytv.GuidedStepHelper;
 
 /**
  * Created by kmorning on 2018-02-20.
