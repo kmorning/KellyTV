@@ -64,10 +64,7 @@ public class EpgSettingsFragment extends GuidedStepFragment {
     @Override
     public void onResume() {
         super.onResume();
-        updateActions();
-    }
 
-    public void updateActions() {
         // load settings
         mSettings = new EpgStoredSettings(getActivity());
         GuidedAction autoUpdateAction = findActionById(ACTION_AUTO_UPDATE);
@@ -82,6 +79,7 @@ public class EpgSettingsFragment extends GuidedStepFragment {
                     AUTO_UPDATE_OPTION_SET_ID,
                     checked[i]);
         }
+
         if (mSettings.getAutoUpdate()) {
             autoUpdateAction.setDescription(AUTO_UPDATE_OPTION_NAMES[0]);
         } else {
@@ -123,7 +121,6 @@ public class EpgSettingsFragment extends GuidedStepFragment {
     @Override
     public void onGuidedActionClicked(GuidedAction action) {
         if (ACTION_URL == action.getId()) {
-            // TODO: validate input
             //Log.d("editedText", action.getDescription().toString());
             mSettings.setUrl(action.getDescription().toString());
         } else if (ACTION_INTERVAL_VALUE == action.getId()) {
@@ -163,5 +160,42 @@ public class EpgSettingsFragment extends GuidedStepFragment {
         } else {
             return false;
         }
+    }
+
+    private void updateActions() {
+        // load settings
+        //mSettings = new EpgStoredSettings(getActivity());
+
+        GuidedAction autoUpdateAction = findActionById(ACTION_AUTO_UPDATE);
+        List<GuidedAction> autoUpdateSubActions = autoUpdateAction.getSubActions();
+        autoUpdateSubActions.get(0).setChecked(mSettings.getAutoUpdate());
+        autoUpdateSubActions.get(1).setChecked(!mSettings.getAutoUpdate());
+        if (mSettings.getAutoUpdate()) {
+            autoUpdateAction.setDescription(AUTO_UPDATE_OPTION_NAMES[0]);
+        } else {
+            autoUpdateAction.setDescription(AUTO_UPDATE_OPTION_NAMES[1]);
+        }
+        notifyActionChanged(findActionPositionById(ACTION_AUTO_UPDATE));
+
+        GuidedAction urlAction = findActionById(ACTION_URL);
+        urlAction.setDescription(mSettings.getUrl());
+        notifyActionChanged(findActionPositionById(ACTION_URL));
+
+        GuidedAction intervalValueAction = findActionById(ACTION_INTERVAL_VALUE);
+        intervalValueAction.setDescription(Integer.toString(mSettings.getIntervalValue()));
+        notifyActionChanged(findActionPositionById(ACTION_INTERVAL_VALUE));
+
+        GuidedAction intervalUnitsAction = findActionById(ACTION_INTERVAL_UNITS);
+        List<GuidedAction> intervalUnitsSubActions = intervalUnitsAction.getSubActions();
+        for (GuidedAction action: intervalUnitsSubActions
+             ) {
+            if (action.getTitle().toString().equals(mSettings.getIntervalUnits())) {
+                action.setChecked(true);
+                intervalUnitsAction.setDescription(action.getTitle().toString());
+            } else {
+                action.setChecked(false);
+            }
+        }
+        notifyActionChanged(findActionPositionById(ACTION_INTERVAL_UNITS));
     }
 }
