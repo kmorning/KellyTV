@@ -39,8 +39,23 @@ public class EpgStatusFragment extends GuidedStepFragment {
 
         GuidedStepHelper.addAction(actions,
                 context,
+                ACTION_EPG_UPDATE_SERVICE,
+                "Update Service",
+                "");
+        GuidedStepHelper.addAction(actions,
+                context,
                 ACTION_LAST_UPDATE_TIME,
                 "Last Update Time",
+                "");
+        GuidedStepHelper.addAction(actions,
+                context,
+                ACTION_NEXT_UPDATE_TIME,
+                "Next Update Time",
+                "");
+        GuidedStepHelper.addAction(actions,
+                context,
+                ACTION_UPDATE_NOW,
+                "Update Now",
                 "");
     }
 
