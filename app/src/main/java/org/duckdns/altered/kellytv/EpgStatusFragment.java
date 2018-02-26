@@ -1,12 +1,16 @@
 package org.duckdns.altered.kellytv;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v17.leanback.app.GuidedStepFragment;
 import android.support.v17.leanback.widget.GuidanceStylist;
 import android.support.v17.leanback.widget.GuidedAction;
+import android.support.v4.content.LocalBroadcastManager;
 
 import java.util.List;
 
@@ -36,6 +40,11 @@ public class EpgStatusFragment extends GuidedStepFragment {
     @Override
     public void onCreateActions(@NonNull List<GuidedAction> actions, Bundle savedInstanceState) {
         Context context = getActivity();
+
+        // Setup broadcast listner to get status information from EPGUpdateService
+        IntentFilter filter = new IntentFilter(Constants.BROADCAST_ACTION);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        LocalBroadcastManager.getInstance(context).registerReceiver(broadcastReceiver, filter);
 
         GuidedStepHelper.addAction(actions,
                 context,
@@ -72,4 +81,34 @@ public class EpgStatusFragment extends GuidedStepFragment {
     public void onGuidedActionClicked(GuidedAction action) {
 
     }
+
+    // Define the callback for broadcast data received
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int statusCode = intent.getIntExtra(Constants.EXTENDED_DATA_STATUS,
+                    Constants.STATE_ACTION_UNKNOWN);
+            //TextView textView = findViewById(R.id.textView);
+
+            switch (statusCode) {
+                case Constants.STATE_ACTION_STARTED:
+                    //textView.setText(getString(R.string.status_start));
+                    break;
+                case Constants.STATE_ACTION_CONNECTING:
+                    //textView.setText(getString(R.string.status_connect));
+                    break;
+                case Constants.STATE_ACTION_DOWNLOADING:
+                    //textView.setText(getString(R.string.status_download));
+                    break;
+                case Constants.STATE_ACTION_DOWNLOAD_COMPLETE:
+                    //textView.setText(getString(R.string.status_download_done));
+                    break;
+                case Constants.STATE_ACTION_FAILED:
+                    //textView.setText(getString(R.string.status_fail));
+                    break;
+                default:
+                    //textView.setText("UNKNOWN");
+            }
+        }
+    };
 }
