@@ -2,6 +2,7 @@ package org.duckdns.altered.kellytv;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.content.SharedPreferences;
 
 import java.io.File;
 import java.io.FileOutputStream;

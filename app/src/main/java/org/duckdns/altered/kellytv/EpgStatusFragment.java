@@ -5,12 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v17.leanback.app.GuidedStepFragment;
 import android.support.v17.leanback.widget.GuidanceStylist;
 import android.support.v17.leanback.widget.GuidedAction;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import java.util.List;
 
@@ -19,6 +21,8 @@ import java.util.List;
  */
 
 public class EpgStatusFragment extends GuidedStepFragment {
+    private Intent mServiceIntent;
+
     /* Action ID definition */
     private static final int ACTION_EPG_UPDATE_SERVICE = 0;
     private static final int ACTION_LAST_UPDATE_TIME = 1;
@@ -50,7 +54,7 @@ public class EpgStatusFragment extends GuidedStepFragment {
                 context,
                 ACTION_EPG_UPDATE_SERVICE,
                 "Update Service",
-                "");
+                "IDLE");
         GuidedStepHelper.addAction(actions,
                 context,
                 ACTION_LAST_UPDATE_TIME,
@@ -79,7 +83,17 @@ public class EpgStatusFragment extends GuidedStepFragment {
 
     @Override
     public void onGuidedActionClicked(GuidedAction action) {
+        if (action.getId() == ACTION_UPDATE_NOW) {
+            launchEPGUpdateService();
+        }
+    }
 
+    private void launchEPGUpdateService() {
+        // TODO: check if service is already running
+        Log.d("LaunchEPGUpdateService", "launched epg update service");
+        mServiceIntent = new Intent(getActivity(), EPGUpdateService.class);
+        mServiceIntent.setData(Uri.parse(mSettings.getUrl()));
+        getActivity().startService(mServiceIntent);
     }
 
     // Define the callback for broadcast data received
@@ -88,27 +102,28 @@ public class EpgStatusFragment extends GuidedStepFragment {
         public void onReceive(Context context, Intent intent) {
             int statusCode = intent.getIntExtra(Constants.EXTENDED_DATA_STATUS,
                     Constants.STATE_ACTION_UNKNOWN);
-            //TextView textView = findViewById(R.id.textView);
+            GuidedAction serviceAction = findActionById(ACTION_EPG_UPDATE_SERVICE);
 
             switch (statusCode) {
                 case Constants.STATE_ACTION_STARTED:
-                    //textView.setText(getString(R.string.status_start));
+                    serviceAction.setDescription(getString(R.string.status_start));
                     break;
                 case Constants.STATE_ACTION_CONNECTING:
-                    //textView.setText(getString(R.string.status_connect));
+                    serviceAction.setDescription(getString(R.string.status_connect));
                     break;
                 case Constants.STATE_ACTION_DOWNLOADING:
-                    //textView.setText(getString(R.string.status_download));
+                    serviceAction.setDescription(getString(R.string.status_download));
                     break;
                 case Constants.STATE_ACTION_DOWNLOAD_COMPLETE:
-                    //textView.setText(getString(R.string.status_download_done));
+                    serviceAction.setDescription(getString(R.string.status_download_done));
                     break;
                 case Constants.STATE_ACTION_FAILED:
-                    //textView.setText(getString(R.string.status_fail));
+                    serviceAction.setDescription(getString(R.string.status_fail));
                     break;
                 default:
-                    //textView.setText("UNKNOWN");
+                    serviceAction.setDescription("UNKNOWN");
             }
+            notifyActionChanged(findActionPositionById(ACTION_EPG_UPDATE_SERVICE));
         }
     };
 }
