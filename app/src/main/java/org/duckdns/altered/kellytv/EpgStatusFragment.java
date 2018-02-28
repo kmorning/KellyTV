@@ -91,7 +91,7 @@ public class EpgStatusFragment extends GuidedStepFragment {
     private void launchEPGUpdateService() {
         // TODO: check if service is already running
         Log.d("LaunchEPGUpdateService", "launched epg update service");
-        mServiceIntent = new Intent(getActivity(), EPGUpdateService.class);
+        mServiceIntent = new Intent(KellyTV.sContext, EPGUpdateService.class);
         mServiceIntent.setData(Uri.parse(mSettings.getUrl()));
         getActivity().startService(mServiceIntent);
     }
