@@ -93,7 +93,8 @@ public class EpgStatusFragment extends GuidedStepFragment {
         Log.d("LaunchEPGUpdateService", "launched epg update service");
         mServiceIntent = new Intent(KellyTV.sContext, EPGUpdateService.class);
         mServiceIntent.setData(Uri.parse(mSettings.getUrl()));
-        getActivity().startService(mServiceIntent);
+        //getActivity().startService(mServiceIntent);
+        KellyTV.sContext.startService(mServiceIntent);
     }
 
     // Define the callback for broadcast data received
