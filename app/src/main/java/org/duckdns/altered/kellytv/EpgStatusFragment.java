@@ -78,7 +78,6 @@ public class EpgStatusFragment extends GuidedStepFragment {
         IntentFilter filter = new IntentFilter(Constants.BROADCAST_ACTION);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         LocalBroadcastManager.getInstance(context).registerReceiver(broadcastReceiver, filter);
-        //LocalBroadcastManager.getInstance(KellyTV.sContext).registerReceiver(broadcastReceiver, filter);
 
         // load settings
         mSettings = new EpgStoredSettings(getActivity());
@@ -96,11 +95,9 @@ public class EpgStatusFragment extends GuidedStepFragment {
     private void launchEPGUpdateService() {
         // TODO: check if service is already running
         Log.d("LaunchEPGUpdateService", "launched epg update service");
-        //mServiceIntent = new Intent(KellyTV.sContext, EPGUpdateService.class);
         mServiceIntent = new Intent(context, EPGUpdateService.class);
         mServiceIntent.setData(Uri.parse(mSettings.getUrl()));
         context.startService(mServiceIntent);
-        //KellyTV.sContext.startService(mServiceIntent);
     }
 
     // Define the callback for broadcast data received
