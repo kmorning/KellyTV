@@ -20,7 +20,7 @@ public class Constants {
     public static final String EXTENDED_STATUS_PROGRESS = "org.duckdns.altered.epgupdater.PROGRESS";
 
     // XML Save File Path
-    public static final String XML_SAVE_FILE_PATH = "/sdcard/epg.xml";
+    public static final String XML_SAVE_FILE_NAME = "guide.xml";
 
     // Status values to broadcast
 

@@ -8,9 +8,11 @@ import android.net.LocalSocketAddress;
 import android.util.Log;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -98,7 +100,7 @@ public class EPGUpdateService extends IntentService {
                     // Save to file
                     //FileOutputStream outputStream = new FileOutputStream(Constants.XML_SAVE_FILE_PATH);
                     // Save to internal storage instead
-                    File file = new File(getFilesDir(), "guide.xml");
+                    File file = new File(getFilesDir(), Constants.XML_SAVE_FILE_NAME);
                     FileOutputStream outputStream = new FileOutputStream(file);
 
                     // keep track of how much is downloaded
@@ -127,6 +129,7 @@ public class EPGUpdateService extends IntentService {
             else {
                 // Report that action failed
                 mBroadcaster.broadcastIntentWithState(Constants.STATE_ACTION_FAILED);
+                return;
             }
 
             // TODO: make sure tvheadend is running
@@ -139,8 +142,31 @@ public class EPGUpdateService extends IntentService {
             socket.connect(socketAddress);
             if (socket.isConnected()) {
                 mBroadcaster.broadcastIntentWithState(Constants.STATE_ACTION_SOCKET_CONNECTED);
+
+                // open xml file
+                File file = new File(getFilesDir(), Constants.XML_SAVE_FILE_NAME);
+                FileInputStream inputStream = new FileInputStream(file);
+
+                // get socket output stream
+                OutputStream outputStream = socket.getOutputStream();
+
+                // write xml data to xmltv socket
+                int bytesRead = -1;
+                byte[] buffer = new byte[BUFFER_SIZE];
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+                outputStream.close();;
+                inputStream.close();
                 socket.close();
             }
+            else {
+                // Report that action failed
+                mBroadcaster.broadcastIntentWithState(Constants.STATE_ACTION_FAILED);
+                return;
+            }
+            // Done successfully
+            mBroadcaster.broadcastIntentWithState(Constants.STATE_ACTION_COMPLETE);
         }
         catch (MalformedURLException e) {
             e.printStackTrace();

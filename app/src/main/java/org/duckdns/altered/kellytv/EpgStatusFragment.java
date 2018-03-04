@@ -128,7 +128,10 @@ public class EpgStatusFragment extends GuidedStepFragment {
                     serviceAction.setDescription(getString(R.string.status_fail));
                     break;
                 case Constants.STATE_ACTION_SOCKET_CONNECTED:
-                    serviceAction.setDescription("XMLTV SOCKET CONNECTED");
+                    serviceAction.setDescription("SENDING GUIDE DATA TO XMLTV SOCKET");
+                    break;
+                case Constants.STATE_ACTION_COMPLETE:
+                    serviceAction.setDescription("SUCCESS");
                     break;
                 default:
                     serviceAction.setDescription("UNKNOWN");
