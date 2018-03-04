@@ -3,6 +3,9 @@ package org.duckdns.altered.kellytv;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.LocalSocket;
+import android.net.LocalSocketAddress;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -124,6 +127,19 @@ public class EPGUpdateService extends IntentService {
             else {
                 // Report that action failed
                 mBroadcaster.broadcastIntentWithState(Constants.STATE_ACTION_FAILED);
+            }
+
+            // TODO: make sure tvheadend is running
+            // Open sockect connection to xmltv.sock
+            String socketName = getFilesDir() + "/xmltv.sock";
+            Log.d("socketConnection", "Connecting to " + socketName);
+            LocalSocketAddress socketAddress = new LocalSocketAddress(socketName,
+                    LocalSocketAddress.Namespace.FILESYSTEM);
+            LocalSocket socket = new LocalSocket();
+            socket.connect(socketAddress);
+            if (socket.isConnected()) {
+                mBroadcaster.broadcastIntentWithState(Constants.STATE_ACTION_SOCKET_CONNECTED);
+                socket.close();
             }
         }
         catch (MalformedURLException e) {

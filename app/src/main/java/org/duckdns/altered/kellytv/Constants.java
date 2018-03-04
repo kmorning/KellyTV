@@ -36,8 +36,11 @@ public class Constants {
     // The background thread has finished downloading xml
     public static final int STATE_ACTION_DOWNLOAD_COMPLETE = 3;
 
+    // The background thread has connected to xmltv socket
+    public static final int STATE_ACTION_SOCKET_CONNECTED = 4;
+
     // The background thread is done
-    public static final int STATE_ACTION_COMPLETE = 4;
+    public static final int STATE_ACTION_COMPLETE = 5;
 
     // The background thread action failed
     public static final int STATE_ACTION_FAILED = -1;
