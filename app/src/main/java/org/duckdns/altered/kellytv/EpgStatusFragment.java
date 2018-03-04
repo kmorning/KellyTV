@@ -30,6 +30,7 @@ public class EpgStatusFragment extends GuidedStepFragment {
     private static final int ACTION_UPDATE_NOW = 3;
 
     private EpgStoredSettings mSettings;
+    private Context context;
 
     @Override
     public GuidanceStylist.Guidance onCreateGuidance(Bundle savedInstanceState) {
@@ -43,12 +44,7 @@ public class EpgStatusFragment extends GuidedStepFragment {
 
     @Override
     public void onCreateActions(@NonNull List<GuidedAction> actions, Bundle savedInstanceState) {
-        Context context = getActivity();
-
-        // Setup broadcast listner to get status information from EPGUpdateService
-        IntentFilter filter = new IntentFilter(Constants.BROADCAST_ACTION);
-        filter.addCategory(Intent.CATEGORY_DEFAULT);
-        LocalBroadcastManager.getInstance(context).registerReceiver(broadcastReceiver, filter);
+        context = getActivity();
 
         GuidedStepHelper.addAction(actions,
                 context,
@@ -75,6 +71,15 @@ public class EpgStatusFragment extends GuidedStepFragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        context = getActivity();
+
+        // Setup broadcast listner to get status information from EPGUpdateService
+        IntentFilter filter = new IntentFilter(Constants.BROADCAST_ACTION);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        LocalBroadcastManager.getInstance(context).registerReceiver(broadcastReceiver, filter);
+        //LocalBroadcastManager.getInstance(KellyTV.sContext).registerReceiver(broadcastReceiver, filter);
+
         // load settings
         mSettings = new EpgStoredSettings(getActivity());
         GuidedAction lastUpdateTimeAction = findActionById(ACTION_LAST_UPDATE_TIME);
@@ -91,16 +96,20 @@ public class EpgStatusFragment extends GuidedStepFragment {
     private void launchEPGUpdateService() {
         // TODO: check if service is already running
         Log.d("LaunchEPGUpdateService", "launched epg update service");
-        mServiceIntent = new Intent(KellyTV.sContext, EPGUpdateService.class);
+        //mServiceIntent = new Intent(KellyTV.sContext, EPGUpdateService.class);
+        mServiceIntent = new Intent(context, EPGUpdateService.class);
         mServiceIntent.setData(Uri.parse(mSettings.getUrl()));
-        //getActivity().startService(mServiceIntent);
-        KellyTV.sContext.startService(mServiceIntent);
+        context.startService(mServiceIntent);
+        //KellyTV.sContext.startService(mServiceIntent);
     }
 
     // Define the callback for broadcast data received
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            if (!isAdded()) return;  // needed to add this otherwise we get
+                                    // fragment not attached to activity after
+                                    // leaving fragment and coming back again
             int statusCode = intent.getIntExtra(Constants.EXTENDED_DATA_STATUS,
                     Constants.STATE_ACTION_UNKNOWN);
             GuidedAction serviceAction = findActionById(ACTION_EPG_UPDATE_SERVICE);
