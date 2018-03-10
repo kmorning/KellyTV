@@ -98,14 +98,18 @@ public class EpgStatusFragment extends GuidedStepFragment {
     private void launchEPGUpdateService() {
         // TODO: check if service is already running
         Log.d("LaunchEPGUpdateService", "launched epg update service");
-        mServiceIntent = new Intent(context, EPGUpdateService.class);
+        Context appContext = getActivity().getApplication();
+        mServiceIntent = new Intent(appContext, EPGUpdateService.class);
         mServiceIntent.setData(Uri.parse(mSettings.getUrl()));
-        context.startService(mServiceIntent);
+        appContext.startService(mServiceIntent);
     }
 
     private void setLastUpdateTime() {
+        /*  Move save preferences to EPGUpdate service, however this may be dangerous
+            since shared prefs is not thread safe.
         Date now = new Date();
         mSettings.setLastUpdateTime(now);
+        */
 
         GuidedAction lastUpdateAction = findActionById(ACTION_LAST_UPDATE_TIME);
         lastUpdateAction.setDescription(mSettings.getLastUpdateTimeStr());

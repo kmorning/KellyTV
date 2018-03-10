@@ -17,6 +17,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Date;
 
 /**
  * Created by kmorning on 2018-02-10.
@@ -168,6 +169,11 @@ public class EPGUpdateService extends WakefulIntentService {
                 return;
             }
             // Done successfully
+            // set last update time - THIS could be DANGEROUS since shared prefs is not thread safe!
+            Date now = new Date();
+            EpgStoredSettings settings = new EpgStoredSettings(getApplicationContext());
+            settings.setLastUpdateTime(now);
+            // notify status fragment
             mBroadcaster.broadcastIntentWithState(Constants.STATE_ACTION_COMPLETE);
         }
         catch (MalformedURLException e) {

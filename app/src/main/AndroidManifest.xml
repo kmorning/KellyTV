@@ -32,8 +32,8 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".OnAlarmReceiver" >
-        </receiver>
+        <!--receiver android:name=".OnAlarmReceiver" >
+        </receiver-->
 
         <service android:name=".EPGUpdateService"
             android:exported="false" />
