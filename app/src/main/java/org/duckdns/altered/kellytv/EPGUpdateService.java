@@ -31,7 +31,7 @@ import java.net.URLConnection;
  * Intent.
  */
 
-public class EPGUpdateService extends IntentService {
+public class EPGUpdateService extends WakefulIntentService {
     // Used to write to the system log from this class.
     public static final String LOG_TAG = "EPGUpdateService";
 
@@ -129,6 +129,7 @@ public class EPGUpdateService extends IntentService {
             else {
                 // Report that action failed
                 mBroadcaster.broadcastIntentWithState(Constants.STATE_ACTION_FAILED);
+                super.onHandleIntent(workIntent);
                 return;
             }
 
@@ -163,6 +164,7 @@ public class EPGUpdateService extends IntentService {
             else {
                 // Report that action failed
                 mBroadcaster.broadcastIntentWithState(Constants.STATE_ACTION_FAILED);
+                super.onHandleIntent(workIntent);
                 return;
             }
             // Done successfully
@@ -185,5 +187,6 @@ public class EPGUpdateService extends IntentService {
             // Report that action failed
             mBroadcaster.broadcastIntentWithState(Constants.STATE_ACTION_FAILED);
         }
+        super.onHandleIntent(workIntent);
     }
 }
