@@ -93,8 +93,7 @@ public class EpgStoredSettings {
 
     public void setLastUpdateTime(Date date) {
         mLastUpdateTimeStr = dateToString(date);
-        mEditor.putString(mContext.getString(R.string.epg_last_update_time_key),
-                mContext.getString(R.string.epg_last_update_time_default));
+        mEditor.putString(mContext.getString(R.string.epg_last_update_time_key), mLastUpdateTimeStr);
         mEditor.apply();
     }
 
