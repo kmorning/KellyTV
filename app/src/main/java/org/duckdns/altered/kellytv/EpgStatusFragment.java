@@ -14,6 +14,7 @@ import android.support.v17.leanback.widget.GuidedAction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -100,6 +101,15 @@ public class EpgStatusFragment extends GuidedStepFragment {
         context.startService(mServiceIntent);
     }
 
+    private void setLastUpdateTime() {
+        Date now = new Date();
+        mSettings.setLastUpdateTime(now);
+
+        GuidedAction lastUpdateAction = findActionById(ACTION_LAST_UPDATE_TIME);
+        lastUpdateAction.setDescription(mSettings.getLastUpdateTimeStr());
+        notifyActionChanged(findActionPositionById(ACTION_LAST_UPDATE_TIME));
+    }
+
     // Define the callback for broadcast data received
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -132,6 +142,7 @@ public class EpgStatusFragment extends GuidedStepFragment {
                     break;
                 case Constants.STATE_ACTION_COMPLETE:
                     serviceAction.setDescription("SUCCESS");
+                    setLastUpdateTime();
                     break;
                 default:
                     serviceAction.setDescription("UNKNOWN");
