@@ -57,11 +57,13 @@ public class EpgStatusFragment extends GuidedStepFragment {
                 ACTION_LAST_UPDATE_TIME,
                 "Last Update Time",
                 "");
+        /* TODO: implement next update time
         GuidedStepHelper.addAction(actions,
                 context,
                 ACTION_NEXT_UPDATE_TIME,
                 "Next Update Time",
                 "");
+        */
         GuidedStepHelper.addAction(actions,
                 context,
                 ACTION_UPDATE_NOW,
