@@ -98,10 +98,9 @@ public class EpgStatusFragment extends GuidedStepFragment {
     private void launchEPGUpdateService() {
         // TODO: check if service is already running
         Log.d("LaunchEPGUpdateService", "launched epg update service");
-        Context appContext = getActivity().getApplication();
-        mServiceIntent = new Intent(appContext, EPGUpdateService.class);
+        mServiceIntent = new Intent(context, EPGUpdateService.class);
         mServiceIntent.setData(Uri.parse(mSettings.getUrl()));
-        appContext.startService(mServiceIntent);
+        context.startService(mServiceIntent);
     }
 
     private void setLastUpdateTime() {

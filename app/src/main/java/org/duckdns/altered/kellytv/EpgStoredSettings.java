@@ -109,6 +109,18 @@ public class EpgStoredSettings {
         mEditor.apply();
     }
 
+    public long getIntervalMillis() {
+        long multiplier;
+        if (mIntervalUnits.equals("days")) {
+            multiplier = 24 * 60 * 60 * 1000;
+        } else if (mIntervalUnits.equals("hours")) {
+            multiplier = 60 * 60 * 1000;
+        } else {
+            multiplier = 60 * 1000;
+        }
+        return mIntervalValue * multiplier;
+    }
+
     public enum IntervalUnits {
         minutes,
         hours,

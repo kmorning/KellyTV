@@ -2,9 +2,10 @@ package org.duckdns.altered.kellytv;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.content.SharedPreferences;
+//import android.content.SharedPreferences;
 import android.net.LocalSocket;
 import android.net.LocalSocketAddress;
+//import android.support.v4.content.WakefulBroadcastReceiver;
 import android.util.Log;
 
 import java.io.File;
@@ -32,7 +33,7 @@ import java.util.Date;
  * Intent.
  */
 
-public class EPGUpdateService extends WakefulIntentService {
+public class EPGUpdateService extends IntentService {
     // Used to write to the system log from this class.
     public static final String LOG_TAG = "EPGUpdateService";
 
@@ -130,7 +131,6 @@ public class EPGUpdateService extends WakefulIntentService {
             else {
                 // Report that action failed
                 mBroadcaster.broadcastIntentWithState(Constants.STATE_ACTION_FAILED);
-                super.onHandleIntent(workIntent);
                 return;
             }
 
@@ -165,7 +165,6 @@ public class EPGUpdateService extends WakefulIntentService {
             else {
                 // Report that action failed
                 mBroadcaster.broadcastIntentWithState(Constants.STATE_ACTION_FAILED);
-                super.onHandleIntent(workIntent);
                 return;
             }
             // Done successfully
@@ -193,6 +192,5 @@ public class EPGUpdateService extends WakefulIntentService {
             // Report that action failed
             mBroadcaster.broadcastIntentWithState(Constants.STATE_ACTION_FAILED);
         }
-        super.onHandleIntent(workIntent);
     }
 }
