@@ -109,7 +109,7 @@ public class EpgStatusFragment extends GuidedStepFragment {
         Date now = new Date();
         mSettings.setLastUpdateTime(now);
         */
-
+        mSettings = new EpgStoredSettings(getActivity());
         GuidedAction lastUpdateAction = findActionById(ACTION_LAST_UPDATE_TIME);
         lastUpdateAction.setDescription(mSettings.getLastUpdateTimeStr());
         notifyActionChanged(findActionPositionById(ACTION_LAST_UPDATE_TIME));

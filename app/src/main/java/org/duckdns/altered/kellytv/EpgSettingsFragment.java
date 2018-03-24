@@ -115,17 +115,39 @@ public class EpgSettingsFragment extends GuidedStepFragment {
                     false);
         }
     }
-
+    /* Update alarm manager if auto enable is true
+        If auto update or url changes, update immediately,
+        if interval value or units change, calculate first
+        update as interval - (currentTime - lastUpdateTime),
+        immediately if less than zero.
+     */
     @Override
     public void onGuidedActionClicked(GuidedAction action) {
         if (ACTION_URL == action.getId()) {
-            //Log.d("editedText", action.getDescription().toString());
-            mSettings.setUrl(action.getDescription().toString());
+            String newUrl = action.getDescription().toString();
+            if (!newUrl.equals(mSettings.getUrl())) {
+                mSettings.setUrl(action.getDescription().toString());
+                // Set alarm and update now if url changed and auto update is on
+                if (mSettings.getAutoUpdate()) {
+                    AlarmHelper.scheduleAlarm(getActivity(), 0,
+                            mSettings.getIntervalMillis());
+                }
+            }
         } else if (ACTION_INTERVAL_VALUE == action.getId()) {
             //Log.d("editedText", action.getDescription().toString());
             try {
-                int value = Integer.parseInt(action.getDescription().toString());
-                mSettings.setIntervalValue(value);
+                int newVal = Integer.parseInt(action.getDescription().toString());
+                // Set alarm and update on the newly calculated next interval
+                if (newVal != mSettings.getIntervalValue()) {
+                    mSettings.setIntervalValue(newVal);
+                    // Set alarm and update now if interval value changed and auto update is on
+                    if (mSettings.getAutoUpdate()) {
+                        long interval = mSettings.getIntervalMillis();
+                        AlarmHelper.scheduleAlarm(getActivity(), getNextUpdateMillis(interval),
+                                interval);
+                    }
+                }
+                // If auto update is enabled, set the new alarm interval
             } catch (NumberFormatException e) {
                 action.setDescription(Integer.toString(mSettings.getIntervalValue()));
             }
@@ -140,12 +162,25 @@ public class EpgSettingsFragment extends GuidedStepFragment {
             notifyActionChanged(findActionPositionById(ACTION_AUTO_UPDATE));
             int i = Arrays.asList(AUTO_UPDATE_OPTION_NAMES).indexOf(selection);
             mSettings.setAutoUpdate(i == 0);
+            // Turn alarm on or offf
+            if (mSettings.getAutoUpdate()) {
+                AlarmHelper.scheduleAlarm(getActivity(), 0,
+                        mSettings.getIntervalMillis());
+            } else {
+                AlarmHelper.cancelAlarm(getActivity());
+            }
             return true;
         } else if (action.getCheckSetId() == INTERVAL_UNITS_OPTION_SET_ID && action.isChecked()) {
             String selection = action.getTitle().toString();
             findActionById(ACTION_INTERVAL_UNITS).setDescription(selection);
             notifyActionChanged(findActionPositionById(ACTION_INTERVAL_UNITS));
             mSettings.setIntervalUnits(selection);
+            // Set alarm and update now if interval value changed and auto update is on
+            if (mSettings.getAutoUpdate()) {
+                long interval = mSettings.getIntervalMillis();
+                AlarmHelper.scheduleAlarm(getActivity(), getNextUpdateMillis(interval),
+                        interval);
+            }
             return true;
         } else if (action.getCheckSetId() == DEFAULTS_OPTION_SET_ID && action.isChecked()) {
             if (action.getTitle() == DEFAULTS_OPTION_NAMES[0]) {
@@ -195,5 +230,15 @@ public class EpgSettingsFragment extends GuidedStepFragment {
             }
         }
         notifyActionChanged(findActionPositionById(ACTION_INTERVAL_UNITS));
+    }
+
+    private long getNextUpdateMillis(long interval) {
+        long now = System.currentTimeMillis();
+        long nextUpdate = interval - now + mSettings.getLastUpdateTime().getTime();
+        if (nextUpdate < 0) {
+            return 0;
+        } else {
+            return nextUpdate;
+        }
     }
 }
