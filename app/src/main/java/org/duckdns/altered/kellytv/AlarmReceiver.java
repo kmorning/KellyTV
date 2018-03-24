@@ -3,7 +3,9 @@ package org.duckdns.altered.kellytv;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 //import android.widget.Toast;
 
@@ -27,6 +29,20 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         //Toast.makeText(context, settings.getUrl(), Toast.LENGTH_LONG).show();
 
+        // Setup dummy broadcast receiver, since settings fragment registers a receiver,
+        // but may not have run yet, which in turn causes epgupdateservice to crash (probably
+        // due to null pointer when no receiver is registered with LocalBroadcastManager).
+        IntentFilter filter = new IntentFilter(Constants.BROADCAST_ACTION);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        LocalBroadcastManager.getInstance(context).registerReceiver(broadcastReceiver, filter);
+
         context.startService(i);
     }
+
+    // Define the callback for broadcast data received
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+        }
+    };
 }
