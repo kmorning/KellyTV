@@ -118,7 +118,7 @@ public class EpgStoredSettings {
         } else {
             multiplier = 60 * 1000;
         }
-        return mIntervalValue * multiplier;
+        return (long)mIntervalValue * multiplier;
     }
 
     public enum IntervalUnits {

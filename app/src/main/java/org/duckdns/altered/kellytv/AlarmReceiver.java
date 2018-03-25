@@ -7,7 +7,7 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-//import android.widget.Toast;
+import android.widget.Toast;
 
 /**
  * Created by kmorning on 2018-03-11.
@@ -27,7 +27,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         Intent i = new Intent(context, EPGUpdateService.class);
         i.setData(Uri.parse(settings.getUrl()));
 
-        //Toast.makeText(context, settings.getUrl(), Toast.LENGTH_LONG).show();
+        Toast.makeText(context, "Updating EPG", Toast.LENGTH_LONG).show();
 
         // Setup dummy broadcast receiver, since settings fragment registers a receiver,
         // but may not have run yet, which in turn causes epgupdateservice to crash (probably

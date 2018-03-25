@@ -88,7 +88,7 @@ public class EpgSettingsFragment extends GuidedStepFragment {
         urlAction.setDescription(mSettings.getUrl());
         
         GuidedAction intervalValueAction = findActionById(ACTION_INTERVAL_VALUE);
-        intervalValueAction.setDescription(Integer.toString(mSettings.getIntervalValue()));
+        intervalValueAction.setDescription(Long.toString(mSettings.getIntervalValue()));
 
         GuidedAction intervalUnitsAction = findActionById(ACTION_INTERVAL_UNITS);
         //intervalUnitsAction.setDescription(mSettings.getIntervalUnits());
@@ -149,7 +149,7 @@ public class EpgSettingsFragment extends GuidedStepFragment {
                 }
                 // If auto update is enabled, set the new alarm interval
             } catch (NumberFormatException e) {
-                action.setDescription(Integer.toString(mSettings.getIntervalValue()));
+                action.setDescription(Long.toString(mSettings.getIntervalValue()));
             }
         }
     }
